@@ -28,7 +28,7 @@ class Dataset:
 
         counter = 0
         for cap in caps["annotations"]:
-            if counter < self.num_caps:
+            if not self.num_caps or counter < self.num_caps:
                 caption = cap["caption"]
                 img_id = cap["image_id"]
                 img_path = os.path.join(TRAIN_IMG_DIR, "%012d.jpg" % img_id)
