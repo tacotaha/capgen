@@ -45,7 +45,7 @@ class Dataset:
         return pad_sequences(toks, padding="post") if pad_seqs else toks
 
 if __name__ == "__main__":
-    fname = os.path.join(DATA_PATH, "annotations/captions_train2017.json")
+    fname = os.path.join(CAP_DIR, "captions_train2017.json")
     training_data = Dataset(fname, num_caps=50000)
     print("Read {} captions.".format(len(training_data.captions)))
     print(training_data.cap_toks[:5])
