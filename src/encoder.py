@@ -15,7 +15,7 @@ class Encoder:
         self.model = self.get_model()
 
     def process_dataset(self, batch_num=20):
-        fnames = sorted(set(self.dataset.cap_dict.keys()))
+        fnames = sorted(set(self.dataset.images))
         tf_dataset = tf.data.Dataset.from_tensor_slices(fnames)
         return tf_dataset.map(self.process_image).batch(batch_num)
 

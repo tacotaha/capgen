@@ -23,10 +23,6 @@ class Dataset:
         self.max_cap_len = max(len(t) for t in self.cap_toks)
 
     def read_captions(self):
-        """
-        fname: input filename containing annotations
-        returns: dict: img_file_name -> list(captions)
-        """
         with open(self.fname, "r") as f:
             caps = json.load(f)
 
