@@ -41,4 +41,5 @@ class Dataset:
 if __name__ == "__main__":
     fname = os.path.join(DATA_PATH, "annotations/captions_train2017.json")
     training_data = Dataset(fname)
-    print(len(training_data.cap_dict))
+    print("Read {} captions.".format(len(training_data.cap_dict)))
+    print(training_data.cap_toks[0])
