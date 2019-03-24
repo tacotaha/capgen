@@ -10,7 +10,6 @@ class Dataset:
         self.fname = fname
         self.img_size = img_size
         self.cap_dict = self.read_captions()
-        self.model = self.get_model()
 
     def read_captions(self):
         """
