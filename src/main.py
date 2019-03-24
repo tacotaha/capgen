@@ -14,7 +14,7 @@ def check_device():
 def main():
     tf.enable_eager_execution()
     fname = os.path.join(CAP_DIR, "captions_train2017.json")
-    training_data = Dataset(fname, num_caps=50000)
+    training_data = Dataset(fname)
     encoder = Encoder(training_data)
     encoder.get_features()
 
