@@ -2,13 +2,8 @@
 
 from filepaths import *
 
+import os
 import json
-import sklearn
-import numpy as np
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from tf.keras.applications import InceptionV3
-from sklearn.model_selection import train_test_split
 
 class Dataset:
     def __init__(self, fname, img_size=(299, 299)):
