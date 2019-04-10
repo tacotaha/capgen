@@ -1,18 +1,15 @@
 import tensorflow as tf
-from tensorflow.nn import tanh, softmax
 from tensorflow.keras import Model
-from attention import BahdanauAttention
-from tensorflow.keras.layers import GRU, Dense, CuDNNGRU, Embedding
+from tensorflow.nn import tanh, softmax
 from tensorflow.test import is_gpu_available
+from tensorflow.keras.layers import GRU, Dense, CuDNNGRU, Embedding
 
 class Decoder(Model):
     def __init__(self, voc_len, embedding_dim=256, units=512):
-        super(Decoder, self).__init__()
-  
+        super(Decoder, self).__init__() 
         self.units = units       
         self.voc_len = voc_len
         self.embedding_dim = embedding_dim
-
         self.embedding = Embedding(voc_len, embedding_dim) 
         self.gru = self.get_gru()
         self.linear = tf.keras.layers.Dense(self.units)
@@ -40,6 +37,7 @@ class Decoder(Model):
 
     def get_gru(self, activation="sigmoid", init="glorot_uniform"):
         if is_gpu_available():
+            print("USING GPU!!")
             return CuDNNGRU(self.units, return_sequences=True,
                     return_state=True, recurrent_initializer=init)
         else:

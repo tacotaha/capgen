@@ -14,7 +14,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 class Dataset:
-    def __init__(self, fname, batch_num=16,img_size=(299, 299), shuffle_data=True,
+    def __init__(self, fname, batch_num=64,img_size=(299, 299), shuffle_data=True,
                  num_caps=None, num_words=5000):
         self.fname = fname
         self.pad_tok = "<pad>"
