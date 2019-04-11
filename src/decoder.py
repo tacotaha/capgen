@@ -1,3 +1,4 @@
+import logging
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.nn import tanh, softmax
@@ -7,6 +8,7 @@ from tensorflow.keras.layers import GRU, Dense, CuDNNGRU, Embedding
 class Decoder(Model):
     def __init__(self, voc_len, embedding_dim=256, units=512):
         super(Decoder, self).__init__() 
+        self.logger = logging.getLogger("capgen")
         self.units = units       
         self.voc_len = voc_len
         self.embedding_dim = embedding_dim
@@ -37,10 +39,11 @@ class Decoder(Model):
 
     def get_gru(self, activation="sigmoid", init="glorot_uniform"):
         if is_gpu_available():
-            print("USING GPU!!")
+            self.logger.info("[decoder] USING GPU!")
             return CuDNNGRU(self.units, return_sequences=True,
                     return_state=True, recurrent_initializer=init)
         else:
+            self.logger.info("[decoder] USING CPU!")
             return GRU(self.units, return_state=True, return_sequences=True, 
                     recurrent_activation=activation, recurrent_initializer=init)
 
