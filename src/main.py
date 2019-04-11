@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import os
-import time
+import logging
+from datetime import datetime as dt
 import numpy as np
 import tensorflow as tf
 
@@ -9,6 +10,7 @@ from filepaths import *
 from dataset import Dataset
 from encoder import Encoder
 from decoder import Decoder
+from tensorflow.train import Checkpoint
 from sklearn.model_selection import train_test_split
 from tensorflow.nn import sparse_softmax_cross_entropy_with_logits as criterion
 
@@ -20,6 +22,22 @@ def loss_func(actual, pred):
     mask = 1 - np.equal(actual, 0)
     return tf.reduce_mean(criterion(labels=actual, logits=pred) * mask)
 
+def init_logger():
+    time_stamp = str(dt.now()).replace(" ", "_")
+    format_str = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s" 
+    logger = logging.getLogger("capgen")
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler("capgen_{}.log".format(time_stamp))
+    fh.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(format_str)
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger
+
 def main():
     units = 512
     epochs = 20
@@ -27,14 +45,16 @@ def main():
     num_caps = 40000
     buffer_size = 1000
     embedding_dim = 256 
+    chk_freq = 100
 
+    logger = init_logger()
     tf.enable_eager_execution()
     fname = os.path.join(CAP_DIR, "captions_train2017.json")
     
     training_data = Dataset(fname, num_caps=num_caps)
     
     img_train, img_test, cap_train, cap_test =\
-    train_test_split(training_data.images, training_data.cap_toks, test_size=0.3) 
+    train_test_split(training_data.images, training_data.cap_toks, test_size=0.3)
 
     data = training_data.load_features(img_train, cap_train)
     data = data.shuffle(buffer_size).batch(batch_size).prefetch(1)
@@ -44,11 +64,11 @@ def main():
 
     encoder = Encoder()
     decoder = Decoder(voc_len)
-    optimizer = tf.train.AdamOptimizer()
+    optimizer = tf.train.AdamOptimizer() 
+    checkpoint = Checkpoint(optimizer=optimizer, encoder=encoder, decoder=decoder)
 
     losses = []
     for epoch in range(epochs):
-        start = time.time()
         total_loss = 0
         for (batch, (img, target)) in enumerate(data):
             loss = 0
@@ -65,10 +85,16 @@ def main():
                 vars = encoder.variables + decoder.variables
                 grads = t.gradient(loss, vars)
                 optimizer.apply_gradients(zip(grads, vars), tf.train.get_or_create_global_step())
-            #print(loss.numpy() / int(target.shape[1]))
-            losses.append(total_loss / len(training_data.captions))
-        print("EPOCH LOSS = {}".format(total_loss / len(training_data.cap_toks)))
-        print("EPOCH TOOK: {}".format(start - time.time()))
+                if (batch % chk_freq) == 0:
+                    logger.info("Reached checkpoint batch # {} on epoch # {}!".format(batch, epoch))
+                    logger.info("Loss = {}".format(loss.numpy() / int(target.shape[1])))
+                    checkpoint.save(os.path.join(MODEL_DIR, "checkpoint"))
+        losses.append(total_loss / len(training_data.captions))
+        with open("epoch_losses.txt", "w") as f:
+            for l in losses:
+                f.write("%s\n" % l)
+        loss.info("Completed Epoch # {}".format(epoch))
+        loss.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
 
 if __name__ == "__main__":
 #    print("===========CHECKING DEVICE=============")
