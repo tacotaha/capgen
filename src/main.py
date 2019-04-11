@@ -24,7 +24,7 @@ def loss_func(actual, pred):
 
 def init_logger():
     time_stamp = str(dt.now()).replace(" ", "_")
-    format_str = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s" 
+    format_str = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
     logger = logging.getLogger("capgen")
     logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler("capgen_{}.log".format(time_stamp))
@@ -41,18 +41,18 @@ def init_logger():
 def main():
     units = 512
     epochs = 20
-    batch_size = 1 
+    batch_size = 1
     num_caps = 40000
     buffer_size = 1000
-    embedding_dim = 256 
+    embedding_dim = 256
     chk_freq = 100
 
     logger = init_logger()
     tf.enable_eager_execution()
     fname = os.path.join(CAP_DIR, "captions_train2017.json")
-    
+
     training_data = Dataset(fname, num_caps=num_caps)
-    
+
     img_train, img_test, cap_train, cap_test =\
     train_test_split(training_data.images, training_data.cap_toks, test_size=0.3)
 
@@ -64,7 +64,7 @@ def main():
 
     encoder = Encoder()
     decoder = Decoder(voc_len)
-    optimizer = tf.train.AdamOptimizer() 
+    optimizer = tf.train.AdamOptimizer()
     checkpoint = Checkpoint(optimizer=optimizer, encoder=encoder, decoder=decoder)
 
     losses = []
@@ -73,7 +73,7 @@ def main():
         for (batch, (img, target)) in enumerate(data):
             loss = 0
             h = decoder.init_hidden_layer(batch_size=target.shape[0])
-            start_dim = [training_data.tokenizer.word_index[training_data.start_tok]] 
+            start_dim = [training_data.tokenizer.word_index[training_data.start_tok]]
             decoder_input = tf.expand_dims(start_dim * batch_size, 1)
             with tf.GradientTape() as t:
                 feats = encoder(img)
@@ -92,9 +92,9 @@ def main():
         losses.append(total_loss / len(training_data.captions))
         with open("epoch_losses.txt", "w") as f:
             for l in losses:
-                f.write("%s\n" % l)
-        loss.info("Completed Epoch # {}".format(epoch))
-        loss.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
+                f.write("%s\n" % l.item())
+        logger.info("Completed Epoch # {}".format(epoch))
+        logger.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
 
 if __name__ == "__main__":
 #    print("===========CHECKING DEVICE=============")
