@@ -41,7 +41,7 @@ def init_logger():
 def main():
     units = 512
     epochs = 20
-    batch_size = 64
+    batch_size = 1 
     num_caps = 40000
     buffer_size = 1000
     embedding_dim = 256 
