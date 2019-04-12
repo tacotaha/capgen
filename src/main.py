@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import os
+import pickle
 import logging
-from datetime import datetime as dt
 import numpy as np
 import tensorflow as tf
+from datetime import datetime as dt
 
 from filepaths import *
 from dataset import Dataset
@@ -89,10 +90,10 @@ def main():
                     logger.info("Reached checkpoint batch # {} on epoch # {}!".format(batch, epoch))
                     logger.info("Loss = {}".format(loss.numpy() / int(target.shape[1])))
                     checkpoint.save(os.path.join(MODEL_DIR, "checkpoint"))
-        losses.append(total_loss / len(training_data.captions))
-        with open("epoch_losses.txt", "w") as f:
-            for l in losses:
-                f.write("%s\n" % l.item())
+        epoch_loss = total_loss / len(training_data.captions)
+        losses.append(epoch_loss)
+        with open("epoch_losses.txt", "a") as f: f.write("%s\n" % epoch_loss)
+        pickle.dump(losses, open("epoch_losses.pkl", "wb"))
         logger.info("Completed Epoch # {}".format(epoch))
         logger.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
 
