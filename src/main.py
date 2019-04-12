@@ -89,13 +89,14 @@ def main():
                 if (batch % chk_freq) == 0:
                     logger.info("Reached checkpoint batch # {} on epoch # {}!".format(batch, epoch))
                     logger.info("Loss = {}".format(loss.numpy() / int(target.shape[1])))
-                    checkpoint.save(os.path.join(MODEL_DIR, "checkpoint"))
         epoch_loss = total_loss / len(training_data.captions)
         losses.append(epoch_loss)
         with open("epoch_losses.txt", "a") as f: f.write("%s\n" % epoch_loss)
         pickle.dump(losses, open("epoch_losses.pkl", "wb"))
         logger.info("Completed Epoch # {}".format(epoch))
         logger.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
+        logger.info("Checkpoint reached, saving model...")
+        checkpoint.save(os.path.join(MODEL_DIR, "checkpoint"))
 
 if __name__ == "__main__":
 #    print("===========CHECKING DEVICE=============")
