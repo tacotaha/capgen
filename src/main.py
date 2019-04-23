@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import os
+import pickle
 import logging
-from datetime import datetime as dt
 import numpy as np
 import tensorflow as tf
+from datetime import datetime as dt
 
 from filepaths import *
 from dataset import Dataset
@@ -24,7 +25,7 @@ def loss_func(actual, pred):
 
 def init_logger():
     time_stamp = str(dt.now()).replace(" ", "_")
-    format_str = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s" 
+    format_str = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
     logger = logging.getLogger("capgen")
     logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler("capgen_{}.log".format(time_stamp))
@@ -41,18 +42,18 @@ def init_logger():
 def main():
     units = 512
     epochs = 20
-    batch_size = 1 
+    batch_size = 1
     num_caps = 40000
     buffer_size = 1000
-    embedding_dim = 256 
+    embedding_dim = 256
     chk_freq = 100
 
     logger = init_logger()
     tf.enable_eager_execution()
     fname = os.path.join(CAP_DIR, "captions_train2017.json")
-    
+
     training_data = Dataset(fname, num_caps=num_caps)
-    
+
     img_train, img_test, cap_train, cap_test =\
     train_test_split(training_data.images, training_data.cap_toks, test_size=0.3)
 
@@ -64,7 +65,7 @@ def main():
 
     encoder = Encoder()
     decoder = Decoder(voc_len)
-    optimizer = tf.train.AdamOptimizer() 
+    optimizer = tf.train.AdamOptimizer()
     checkpoint = Checkpoint(optimizer=optimizer, encoder=encoder, decoder=decoder)
 
     losses = []
@@ -73,7 +74,7 @@ def main():
         for (batch, (img, target)) in enumerate(data):
             loss = 0
             h = decoder.init_hidden_layer(batch_size=target.shape[0])
-            start_dim = [training_data.tokenizer.word_index[training_data.start_tok]] 
+            start_dim = [training_data.tokenizer.word_index[training_data.start_tok]]
             decoder_input = tf.expand_dims(start_dim * batch_size, 1)
             with tf.GradientTape() as t:
                 feats = encoder(img)
@@ -88,13 +89,14 @@ def main():
                 if (batch % chk_freq) == 0:
                     logger.info("Reached checkpoint batch # {} on epoch # {}!".format(batch, epoch))
                     logger.info("Loss = {}".format(loss.numpy() / int(target.shape[1])))
-                    checkpoint.save(os.path.join(MODEL_DIR, "checkpoint"))
-        losses.append(total_loss / len(training_data.captions))
-        with open("epoch_losses.txt", "w") as f:
-            for l in losses:
-                f.write("%s\n" % l)
-        loss.info("Completed Epoch # {}".format(epoch))
-        loss.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
+        epoch_loss = total_loss / len(training_data.captions)
+        losses.append(epoch_loss)
+        with open("epoch_losses.txt", "a") as f: f.write("%s\n" % epoch_loss)
+        pickle.dump(losses, open("epoch_losses.pkl", "wb"))
+        logger.info("Completed Epoch # {}".format(epoch))
+        logger.info("Epoch Loss = {}".format(total_loss / len(training_data.cap_toks)))
+        logger.info("Checkpoint reached, saving model...")
+        checkpoint.save(os.path.join(MODEL_DIR, "checkpoint"))
 
 if __name__ == "__main__":
 #    print("===========CHECKING DEVICE=============")
