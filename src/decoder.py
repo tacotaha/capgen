@@ -49,14 +49,3 @@ class Decoder(Model):
 
     def init_hidden_layer(self, batch_size):
         return tf.zeros((batch_size, self.units))
-
-    def tokenize_caps(self):
-        self.tokenizer.fit_on_texts(self.train_caps)
-        self.train_seqs = self.tokenizer.texts_to_sequences(train_caps)
-        self.cap_vec = pad_sequences(self.train_seqs, padding='post') 
-        self.max_len = max([len(v) for v in self.cap_vec])
-
-    def create_vocab(self):
-        self.vocab = {x:y for x, y in self.tokenizer.word_index.items()}
-        self.vocab[self.tokenizer.oov_token] = self.num_words + 1
-        self.vocab[''] = 0
