@@ -55,7 +55,7 @@ class Vocabulary:
         return(len(self.w2idx))
 
 if __name__ == "__main__":
-    cap_file = os.path.join(CAP_DIR, "captions_train2014.json")
+    
     out_file = os.path.join(DATA_PATH, "vocab.pkl")
 
     coco = COCO(cap_file)
