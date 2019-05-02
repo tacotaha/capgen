@@ -10,7 +10,7 @@ class Decoder(nn.Module):
     def __init__(self, embed_size, hidden_size, vocab_size, num_layers, max_len=20):
         super(Decoder, self).__init__()
         self.max_len = max_len
-        self.embed = nn.embedding(vocab_size, embed_size)
+        self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, vocab_size)
  
