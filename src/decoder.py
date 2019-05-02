@@ -3,7 +3,6 @@ import torch.nn as nn
 import torchvision.models as models
 from torch.nn.utils.rnn import pack_padded_sequence
 
-
 class Decoder(nn.Module):
     """
     Embedding Layer + LSTM + Linear Layer
@@ -12,8 +11,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.max_len = max_len
         self.embed = nn.embedding(vocab_size, embed_size)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers,
-                batch_firs=True)
+        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, vocab_size)
  
     def forward(self, feats, caps, lens): 
