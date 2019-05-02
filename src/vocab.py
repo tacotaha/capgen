@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+
+import os
+import pickle
+import argparse
+from progress.bar import Bar
+from nltk import word_tokenize
+from pycocotools.coco import COCO
+from collections import Counter, defaultdict
+
+from filepaths import *
+
 class Vocabulary:
     def __init__(self, special_tokens=None):
         self.w2idx = {}
@@ -41,3 +53,23 @@ class Vocabulary:
 
     def __len__(self):
         return(len(self.w2idx))
+
+if __name__ == "__main__":
+    cap_file = os.path.join(CAP_DIR, "captions_train2014.json")
+    out_file = os.path.join(DATA_PATH, "vocab.pkl")
+
+    coco = COCO(cap_file)
+    vocab = Vocabulary(["<pad>", "<start>", "<end>", "<unk>"])
+
+    bar = Bar("Extracting Captions", max=len(coco.anns))
+
+    for i, id in enumerate(coco.anns.keys()):
+        cap = str(coco.anns[id]["caption"])
+        toks = word_tokenize(cap.lower())
+        vocab.add_tokens(toks)
+        bar.next()
+
+    with open(out_file, "wb") as f:
+        pickle.dump(vocab, f)
+
+    bar.finish()
