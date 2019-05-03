@@ -45,8 +45,9 @@ decoder = Decoder(embed_size, hidden_size, len(vocab), num_layers).to(device)
 
 params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
 optimizer = torch.optim.Adam(params, lr=alpha)
-
+epoch_losses = []
 for epoch in range(num_epochs):
+    losses = []
     for i, (imgs, caps, lens) in enumerate(dl):
         imgs = imgs.to(device)
         caps = caps.to(device)
@@ -59,8 +60,13 @@ for epoch in range(num_epochs):
         encoder.zero_grad()
         loss.backward()
         optimizer.step()
+        losses.append(loss.item())
         print("loss = {}".format(loss.item()))
     
+    epoch_losses.append(sum(losses)/len(losses))
+    with open("epoch_losses.pkl", "wb") as f:
+        pickle.dump(epoch_losses, f)
+
     d_path = os.path.join(MODEL_PATH, "decoder-epoch{}.ckpt".format(epoch))
     e_path = os.path.join(MODEL_PATH, "encoder-epoch{}.ckpt".format(epoch))
     torch.save(decoder.state_dict(), d_path) 
