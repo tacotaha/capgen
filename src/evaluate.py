@@ -5,6 +5,7 @@ from nltk.translate.bleu_score import sentence_bleu
 
 from filepaths import *
 from inference import get_caption
+from vocab import Vocabulary
 
 special_toks = ["<pad>", "<start>", "<end>", "<unk>"]
 
@@ -36,17 +37,30 @@ def generate_index():
         id = i["id"]
         file_name = i["file_name"]
         caps = index[id]
-        rand_cap = random.choice(caps)
-        img_caps.append((id, file_name, rand_cap))
+        caps.sort(key=len)
+        img_caps.append((id, file_name, caps[0]))
 
     return img_caps
 
 if __name__ == "__main__":
-    index = generate_index()
 
-    for (id, file_name, cap) in index:
-        path = os.path.join(VAL_IMG_DIR, file_name)
-        pred_cap = get_caption(path)
-        print("Real cap = {}".format(cap))
-        print("Pred cap = {}".format(pred_cap))
+    results_path = os.path.join(DATA_PATH, "results.pkl")
+    
+    if not os.path.exists(results_path):
+        results = {}
+        index = generate_index()
+        for (id, file_name, cap) in index:
+            path = os.path.join(VAL_IMG_DIR, file_name)
+            pred_cap = get_caption(path)
+            results[id] = (pred_cap, cap)
+        
+        with open(results_path, "wb") as f:
+            pickle.dump(results, f)
 
+    else:
+        with open(results_path, "rb") as f:
+            results = pickle.load(f)
+
+    for (pred_cap, real_cap) in results:
+        print(prd_cap)
+        print(real_cap)
