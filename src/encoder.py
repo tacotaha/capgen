@@ -3,7 +3,6 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
-from torch.nn.utils.rnn import pack_padded_sequence
 
 class Encoder(torch.nn.Module):
     """

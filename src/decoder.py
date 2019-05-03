@@ -18,7 +18,7 @@ class Decoder(nn.Module):
         embd = self.embed(caps)
         embd = torch.cat((feats.unsqueeze(1), embd), 1)
         packed = pack_padded_sequence(embd, lens, batch_first=True)
-        return self.linear(self.lstm(packed)[0][0])
+        return self.linear(self.lstm[0][0])
     
     def sample(self, feats, states=None):
         """
@@ -27,9 +27,9 @@ class Decoder(nn.Module):
         sampled_ids = []
         inputs = feats.unsqueeze(1)
         for i in range(self.max_len):
-            h, x = self.lstm(inputs, states)
-            out = self.linear(h.sqeueeze(1))
+            h, states = self.lstm(inputs, states)
+            out = self.linear(h.squeeze(1))
             x, y = out.max(1)
             sampled_ids.append(y)
-            inputs = self.embed(y).unsqeueeze(1)
+            inputs = self.embed(y).unsqueeze(1)
         return torch.stack(sampled_ids, 1)
