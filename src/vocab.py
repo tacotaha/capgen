@@ -50,15 +50,17 @@ class Vocabulary:
             return self.idx2w[item if item in self.idx2w else 3]
         else:
             raise TypeError("Supported indices are int and str")
+    
+    def __call__(self, item):
+        return self.__getitem__(item)
 
     def __len__(self):
         return(len(self.w2idx))
 
 if __name__ == "__main__":
-    
     out_file = os.path.join(DATA_PATH, "vocab.pkl")
 
-    coco = COCO(cap_file)
+    coco = COCO(CAP_FILE)
     vocab = Vocabulary(["<pad>", "<start>", "<end>", "<unk>"])
 
     bar = Bar("Extracting Captions", max=len(coco.anns))
