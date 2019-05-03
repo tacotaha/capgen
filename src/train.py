@@ -10,7 +10,7 @@ from torch.nn.utils.rnn import pack_padded_sequence
 from filepaths import *
 from decoder import Decoder
 from encoder import Encoder
-from build_vocab import Vocabulary
+from vocab import Vocabulary
 from utils import collate_fn
 from coco_dataset import COCODataset
 

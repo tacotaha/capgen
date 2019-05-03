@@ -45,9 +45,9 @@ class Vocabulary:
 
     def __getitem__(self, item):
         if isinstance(item, str):
-            return self.w2idx[item]
+            return self.w2idx[item if item in self.w2idx else "<unk>"]
         elif isinstance(item , int):
-            return self.idx2w[item]
+            return self.idx2w[item if item in self.idx2w else 3]
         else:
             raise TypeError("Supported indices are int and str")
 
