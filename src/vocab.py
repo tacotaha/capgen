@@ -58,12 +58,9 @@ class Vocabulary:
         return(len(self.w2idx))
 
 if __name__ == "__main__":
-    out_file = os.path.join(DATA_PATH, "vocab.pkl")
-
-    coco = COCO(CAP_FILE)
-    vocab = Vocabulary(["<pad>", "<start>", "<end>", "<unk>"])
-
+    coco = COCO(TRAINING_CAP_FILE)
     bar = Bar("Extracting Captions", max=len(coco.anns))
+    vocab = Vocabulary(["<pad>", "<start>", "<end>", "<unk>"])
 
     for i, id in enumerate(coco.anns.keys()):
         cap = str(coco.anns[id]["caption"])
@@ -71,7 +68,7 @@ if __name__ == "__main__":
         vocab.add_tokens(toks)
         bar.next()
 
-    with open(out_file, "wb") as f:
+    with open(VOCAB_FILE, "wb") as f:
         pickle.dump(vocab, f)
 
     bar.finish()
