@@ -20,21 +20,21 @@ criterion = torch.nn.CrossEntropyLoss()
 with open(VOCAB_FILE, "rb") as f:
     vocab = pickle.load(f)
 
-transform = transforms.Compose([ 
+transform = transforms.Compose([
         transforms.RandomCrop(crop_size),
-        transforms.RandomHorizontalFlip(), 
-        transforms.ToTensor(), 
-        transforms.Normalize((0.485, 0.456, 0.406), 
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.485, 0.456, 0.406),
 			     (0.229, 0.224, 0.225))])
 
-coco = COCODataset(root=TRAIN_IMG_DIR, 
+coco = COCODataset(root=TRAIN_IMG_DIR,
                    json=CAP_FILE,
                    vocab = vocab,
                    transform=transform)
 
 dl = DataLoader(dataset=coco, batch_size=batch_size, shuffle=False,
                 num_workers=num_workers, collate_fn=collate_fn)
-                                    
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -62,12 +62,12 @@ for epoch in range(num_epochs):
         optimizer.step()
         losses.append(loss.item())
         print("loss = {}".format(loss.item()))
-    
+
     epoch_losses.append(sum(losses)/len(losses))
     with open("epoch_losses.pkl", "wb") as f:
         pickle.dump(epoch_losses, f)
 
-    d_path = os.path.join(MODEL_PATH, "decoder-epoch{}.ckpt".format(epoch))
-    e_path = os.path.join(MODEL_PATH, "encoder-epoch{}.ckpt".format(epoch))
-    torch.save(decoder.state_dict(), d_path) 
-    torch.save(encoder.state_dict(), d_path) 
+    d_path = os.path.join(MODEL_DIR, "decoder-epoch{}.ckpt".format(epoch))
+    e_path = os.path.join(MODEL_DIR, "encoder-epoch{}.ckpt".format(epoch))
+    torch.save(decoder.state_dict(), e_path)
+    torch.save(encoder.state_dict(), d_path)
