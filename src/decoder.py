@@ -13,13 +13,13 @@ class Decoder(nn.Module):
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, vocab_size)
- 
-    def forward(self, feats, caps, lens): 
+
+    def forward(self, feats, caps, lens):
         embd = self.embed(caps)
         embd = torch.cat((feats.unsqueeze(1), embd), 1)
         packed = pack_padded_sequence(embd, lens, batch_first=True)
-        return self.linear(self.lstm[0][0])
-    
+        return self.linear(self.lstm(packed)[0][0])
+
     def sample(self, feats, states=None):
         """
         Take the maximum id for every time step.
