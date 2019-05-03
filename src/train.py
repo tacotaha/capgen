@@ -3,13 +3,16 @@
 import torch
 import pickle
 import torchvision.datasets as dset
+from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
+from torch.nn.utils.rnn import pack_padded_sequence
 
 from filepaths import *
 from decoder import Decoder
 from encoder import Encoder
-from vocab import Vocabulary
+from build_vocab import Vocabulary
 from utils import collate_fn
+from coco_dataset import COCODataset
 
 # Model Params
 embed_size = 256
@@ -32,9 +35,14 @@ transform = transforms.Compose([
         transforms.Normalize((0.485, 0.456, 0.406), 
 			     (0.229, 0.224, 0.225))])
 
-cap = dset.CocoCaptions(root=TRAIN_IMG_DIR, 
-                        annFile=CAP_FILE,
-                        transform=transform)
+coco = COCODataset(root=TRAIN_IMG_DIR, 
+                   json=CAP_FILE,
+                   vocab = vocab,
+                   transform=transform)
+
+dl = DataLoader(dataset=coco, batch_size=batch_size, shuffle=False,
+                num_workers=num_workers, collate_fn=collate_fn)
+                                    
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -46,9 +54,20 @@ decoder = Decoder(embed_size, hidden_size, len(vocab), num_layers).to(device)
 params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
 optimizer = torch.optim.Adam(params, lr=alpha)
 
-total_step = len(cap)
+total_step = len(dl)
 print(total_step)
 
 for epoch in range(num_epochs):
-    for i, (img, cap) in enumerate(cap):
-        print(i, img, cap)
+    for i, (imgs, caps, lens) in enumerate(dl):
+        imgs = imgs.to(device)
+        caps = caps.to(device)
+        targets = pack_padded_sequence(caps, lens, batch_first=True)[0]
+
+        feats = encoder(imgs)
+        out = decoder(feats, caps, lens)
+        loss = criterion(out, targets)
+        decoder.zero_grad()
+        encoder.zero_grad()
+        loss.backward()
+        optimizer.step()
+        print("loss = {}".format(loss.item()))
