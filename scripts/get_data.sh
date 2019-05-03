@@ -11,9 +11,9 @@ mkdir -p ../data
 cd ../data
 
 echo -e "Downloading Images...\n"
-wget http://images.cocodataset.org/zips/train2017.zip
+wget http://images.cocodataset.org/zips/train2014.zip
 unzip train2017.zip 
 
 echo -e "Downloading Annotations...\n"
-wget http://images.cocodataset.org/annotations/annotations_trainval2017.zip
-unzip annotations_trainval2017.zip
+wget http://images.cocodataset.org/annotations/annotations_trainval2014.zip
+unzip annotations_trainval2014.zip
