@@ -27,4 +27,6 @@ Use `train.py` to train the model
 ## Sources
 Google's show and tell paper: (https://arxiv.org/pdf/1411.4555.pdf)
 
-Dataset: [http://cocodataset.org/#home](http://cocodataset.org/#home)
+resnet paper: (https://arxiv.org/abs/1512.03385)
+
+Dataset: (http://cocodataset.org/#home)
