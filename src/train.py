@@ -8,21 +8,13 @@ import torchvision.transforms as transforms
 from torch.nn.utils.rnn import pack_padded_sequence
 
 from filepaths import *
+from model_params import *
 from decoder import Decoder
 from encoder import Encoder
 from vocab import Vocabulary
 from utils import collate_fn
 from coco_dataset import COCODataset
 
-# Model Params
-embed_size = 256
-hidden_size = 512
-num_layers = 1
-num_epochs = 5
-batch_size = 128
-num_workers = 2
-alpha = 0.001
-crop_size = 224
 criterion = torch.nn.CrossEntropyLoss()
 
 with open(VOCAB_FILE, "rb") as f:
@@ -53,9 +45,6 @@ decoder = Decoder(embed_size, hidden_size, len(vocab), num_layers).to(device)
 
 params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
 optimizer = torch.optim.Adam(params, lr=alpha)
-
-total_step = len(dl)
-print(total_step)
 
 for epoch in range(num_epochs):
     for i, (imgs, caps, lens) in enumerate(dl):
