@@ -7,7 +7,7 @@ This file contains the global model parameters
 embed_size = 256
 hidden_size = 512
 num_layers = 1
-num_epochs = 5
+num_epochs = 20 
 batch_size = 128
 num_workers = 2
 alpha = 0.001
