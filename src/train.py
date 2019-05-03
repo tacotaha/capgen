@@ -71,3 +71,8 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
         print("loss = {}".format(loss.item()))
+    
+    d_path = os.path.join(MODEL_PATH, "decoder-epoch{}.ckpt".format(epoch))
+    e_path = os.path.join(MODEL_PATH, "encoder-epoch{}.ckpt".format(epoch))
+    torch.save(decoder.state_dict(), d_path) 
+    torch.save(encoder.state_dict(), d_path) 
