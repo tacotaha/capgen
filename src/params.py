@@ -12,3 +12,4 @@ batch_size = 128
 num_workers = 2
 alpha = 0.001
 crop_size = 224
+img_size = [crop_size, crop_size]
