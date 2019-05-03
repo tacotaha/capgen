@@ -7,7 +7,7 @@
 
     $ git clone https://github.com/tazzaoui/capgen.git && cd capgen
 
-  2. Download Training Data
+  2. Download MS-COCO Training Data
 
     $ cd scripts && ./get_data.sh
 
@@ -21,6 +21,9 @@ Use `train.py` to train the model
 
 `$ ./train.py`
 
-An neural image caption generator based on Google's show and tell paper: (https://arxiv.org/pdf/1411.4555.pdf)
 
-Dataset: Flickr8k Dataset available via the request form here:https://forms.illinois.edu/sec/1713398
+
+
+## Sources
+An neural image caption generator based on Google's show and tell paper: (https://arxiv.org/pdf/1411.4555.pdf)
+Dataset: [http://cocodataset.org/#home](http://cocodataset.org/#home)
