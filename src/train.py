@@ -28,8 +28,8 @@ transform = transforms.Compose([
 			     (0.229, 0.224, 0.225))])
 
 coco = COCODataset(root=TRAIN_IMG_DIR,
-                   json=CAP_FILE,
-                   vocab = vocab,
+                   json=TRAIN_CAP_FILE,
+                   vocab=vocab,
                    transform=transform)
 
 dl = DataLoader(dataset=coco, batch_size=batch_size, shuffle=False,
