@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This file contains the global model paramters
+This file contains the global model parameters
 """
 
 embed_size = 256

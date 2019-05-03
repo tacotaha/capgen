@@ -7,8 +7,8 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from torch.nn.utils.rnn import pack_padded_sequence
 
+from params import *
 from filepaths import *
-from model_params import *
 from decoder import Decoder
 from encoder import Encoder
 from vocab import Vocabulary
