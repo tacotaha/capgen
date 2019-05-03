@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from torchvision import transforms
 
 from filepaths import *
-from model_params import *
+from params import *
 from encoder import Encoder
 from decoder import Decoder
 from vocab import Vocabulary
@@ -21,19 +21,16 @@ def get_caption(img_path):
                                         (0.485, 0.456, 0.406), 
                                         (0.229, 0.224, 0.225))])
 
-    with open(VOCAB_PATH, "rb") as f:
+    with open(VOCAB_FILE, "rb") as f:
         vocab = pickle.load(f)
 
     encoder = Encoder(embed_size).eval().to(device)
     decoder = Decoder(embed_size, hidden_size, len(vocab), num_layers).to(device)
-    encoder.load_state_dict(torch.load(encoder_path))
-    decoder.load_state_dict(torch.load(decoder_path))
+    encoder.load_state_dict(torch.load(ENCODER_PATH))
+    decoder.load_state_dict(torch.load(DECODER_PATH))
 
     img = Image.open(img_path).resize(img_size, Image.LANCZOS)
-
-    if transform:
-        img = img.transform(img).unsqueeze(0)
-
+    img = transform(img).unsqueeze(0)
     img = img.to(device)
 
     feat = encoder(img)
@@ -57,7 +54,7 @@ if __name__ == "__main__":
     print("Caption: ", caption)
 
     img = Image.open(img_path)
-    plt.title("Caption: ", caption)
     plt.imshow(img)
     plt.savefig("caption.png")
+    plt.show()
 
