@@ -1,20 +1,18 @@
 import json
 import pickle
-import random
+from nltk.tokenize import word_tokenize
 from nltk.translate.bleu_score import sentence_bleu
 
 from filepaths import *
 from inference import get_caption
-from vocab import Vocabulary
 
-special_toks = ["<pad>", "<start>", "<end>", "<unk>"]
-
-def compute_bleu(img, cap, n=4):
-    weights = (1.0 / n,) * n
-    cap_pred = get_caption(img)
-    cap_pred = [c for c in cap_pred.split() if c not in special_toks]
-    score = sentence_bleu([cap], cap_pred, weights=weights) 
-
+def compute_bleu(real, pred, n=4):
+    weights = (1.0 / n,) * n 
+    pred = " ".join(pred.split()[1:-2])
+    pred = [i for i in word_tokenize(pred.lower()) if i.isalpha()] 
+    real = [i for i in word_tokenize(real.lower()) if i.isalpha()] 
+    score = sentence_bleu([real], pred, weights=weights) 
+    return score
 
 def generate_index():
     with open(VAL_CAP_FILE, "r", encoding="utf-8") as f:
@@ -40,19 +38,27 @@ def generate_index():
         caps.sort(key=len)
         img_caps.append((id, file_name, caps[0]))
 
-    return img_caps
+    return index, img_caps
 
 if __name__ == "__main__":
 
+    index, img_caps = generate_index()
     results_path = os.path.join(DATA_PATH, "results.pkl")
     
     if not os.path.exists(results_path):
+        i = 0
+        num_res = 1000
         results = {}
-        index = generate_index()
-        for (id, file_name, cap) in index:
+        for (id, file_name, cap) in image_caps:
+            i += 1
             path = os.path.join(VAL_IMG_DIR, file_name)
-            pred_cap = get_caption(path)
+            try:
+                pred_cap = get_caption(path)
+            except RuntimeError:
+                print("ERROR!")
+                continue
             results[id] = (pred_cap, cap)
+            if i >= num_res: break
         
         with open(results_path, "wb") as f:
             pickle.dump(results, f)
@@ -60,7 +66,17 @@ if __name__ == "__main__":
     else:
         with open(results_path, "rb") as f:
             results = pickle.load(f)
+    
+    bleu_scores = [0, 0, 0, 0] 
+    for n in range(1, 5):
+        for res in results: 
+            (real_cap, pred_cap) = results[res]
+            all_caps = index[res]
+            scores = []
+            for cap in all_caps:
+                score = compute_bleu(pred_cap, cap, n)
+                scores.append(score if score else 0)
+            bleu_scores[n - 1] += (sum(scores) / len(scores)) 
+        bleu_scores[n - 1] /= len(results)
 
-    for (pred_cap, real_cap) in results:
-        print(prd_cap)
-        print(real_cap)
+    print("Scores = {}".format(bleu_scores))
