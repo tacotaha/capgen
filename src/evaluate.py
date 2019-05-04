@@ -40,6 +40,21 @@ def generate_index():
 
     return index, img_caps
 
+def eval_bleu(index, results):
+    bleu_scores = [0, 0, 0, 0] 
+    for n in range(1, 5):
+        for res in results: 
+            (real_cap, pred_cap) = results[res]
+            all_caps = index[res]
+            scores = []
+            for cap in all_caps:
+                score = compute_bleu(pred_cap, cap, n)
+                scores.append(score if score else 0)
+            bleu_scores[n - 1] += (sum(scores) / len(scores)) 
+        bleu_scores[n - 1] /= len(results)
+    return bleu_scores
+
+
 if __name__ == "__main__":
 
     index, img_caps = generate_index()
@@ -66,17 +81,6 @@ if __name__ == "__main__":
     else:
         with open(results_path, "rb") as f:
             results = pickle.load(f)
-    
-    bleu_scores = [0, 0, 0, 0] 
-    for n in range(1, 5):
-        for res in results: 
-            (real_cap, pred_cap) = results[res]
-            all_caps = index[res]
-            scores = []
-            for cap in all_caps:
-                score = compute_bleu(pred_cap, cap, n)
-                scores.append(score if score else 0)
-            bleu_scores[n - 1] += (sum(scores) / len(scores)) 
-        bleu_scores[n - 1] /= len(results)
-
+   
+    bleu_scores = eval_bleu(index, results)
     print("Scores = {}".format(bleu_scores))
