@@ -17,3 +17,6 @@ VAL_IMG_DIR = os.path.join(DATA_PATH, "val2014")
 VOCAB_FILE = os.path.join(DATA_PATH, "vocab.pkl")
 ENCODER_FILE = os.path.join(MODEL_DIR, "encoder.ckpt")
 DECODER_FILE = os.path.join(MODEL_DIR, "decoder.ckpt")
+
+
+RESULTS_FILE = os.path.join(DATA_PATH, "results.json")
