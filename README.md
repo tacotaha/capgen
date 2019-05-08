@@ -34,7 +34,7 @@ Use `train.py` to train the model
 
 ## Evaluate the Model
 
-Use the `eval.sh` script to evaluate the model
+Use the `eval.sh` script to evaluate the model. The resulting captions can be found in `data/results.json`.
 
 `$ scripts/eval.sh`
 
