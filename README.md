@@ -32,6 +32,11 @@ Use `train.py` to train the model
 `$ ./train.py`
 
 
+## Evaluate the Model
+
+Use the `eval.sh` script to evaluate the model
+
+`$ scripts/eval.sh`
 
 
 ## References
