@@ -62,7 +62,7 @@ if __name__ == "__main__":
     
     if not os.path.exists(results_path):
         i = 0
-        num_res = 10
+        num_res = 4000
         results = list() 
         for (id, file_name, cap) in img_caps:
             i += 1
