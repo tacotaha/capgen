@@ -1,10 +1,9 @@
 import json
-import pickle
 from nltk.tokenize import word_tokenize
-from nltk.translate.bleu_score import sentence_bleu
-
+from nltk.translate.bleu_score import sentence_bleu 
 from filepaths import *
 from inference import get_caption
+from vocab import Vocabulary
 
 def compute_bleu(real, pred, n=4):
     weights = (1.0 / n,) * n 
@@ -43,9 +42,11 @@ def generate_index():
 def eval_bleu(index, results):
     bleu_scores = [0, 0, 0, 0] 
     for n in range(1, 5):
-        for res in results: 
-            (real_cap, pred_cap) = results[res]
+        for res in results:
+            (real_cap, pred_cap) = results[res] 
             all_caps = index[res]
+            if(real_cap not in all_caps):
+                print(real_cap, all_caps)
             scores = []
             for cap in all_caps:
                 score = compute_bleu(pred_cap, cap, n)
@@ -56,15 +57,14 @@ def eval_bleu(index, results):
 
 
 if __name__ == "__main__":
-
     index, img_caps = generate_index()
-    results_path = os.path.join(DATA_PATH, "results.pkl")
+    results_path = os.path.join(DATA_PATH, "results.json")
     
     if not os.path.exists(results_path):
         i = 0
-        num_res = 1000
-        results = {}
-        for (id, file_name, cap) in image_caps:
+        num_res = 10
+        results = list() 
+        for (id, file_name, cap) in img_caps:
             i += 1
             path = os.path.join(VAL_IMG_DIR, file_name)
             try:
@@ -72,15 +72,14 @@ if __name__ == "__main__":
             except RuntimeError:
                 print("ERROR!")
                 continue
-            results[id] = (pred_cap, cap)
+
+            pred_cap = " ".join(pred_cap.split()[1:-2]) 
+            results.append({"image_id": id, "caption": pred_cap})
             if i >= num_res: break
         
-        with open(results_path, "wb") as f:
-            pickle.dump(results, f)
+        with open(results_path, "w") as f:
+            json.dump(results, f)
 
     else:
-        with open(results_path, "rb") as f:
-            results = pickle.load(f)
-   
-    bleu_scores = eval_bleu(index, results)
-    print("Scores = {}".format(bleu_scores))
+        with open(results_path, "r") as f:
+            results = json.load(f)
