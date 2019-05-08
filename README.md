@@ -35,8 +35,8 @@ Use `train.py` to train the model
 
 
 ## References
-* [Show and Tell: A Neural Image Caption Generator]: (https://arxiv.org/pdf/1411.4555.pdf)
-* [Deep Residual Learning for Image Recognition]: (https://arxiv.org/abs/1512.03385)
-* MSCOCO Dataset: (http://cocodataset.org/#home)
-* [TensorFlow Implementation] (https://github.com/lyatdawn/Show-and-Tell)
-* [PyTorch Implementation] (https://github.com/yunjey/pytorch-tutorial/tree/master/tutorials/03-advanced/image_captioning)
+* <a href="https://arxiv.org/pdf/1411.4555.pdf">Show and Tell: A Neural Image Caption Generator</a>
+* <a href="https://arxiv.org/abs/1512.03385" >Deep Residual Learning for Image Recognition</a>
+* <a href="http://cocodataset.org/#home"> MSCOCO Dataset</a>
+* <a href="https://github.com/lyatdawn/Show-and-Tell">TensorFlow Implementation</a>
+* <a href="https://github.com/yunjey/pytorch-tutorial/tree/master/tutorials/03-advanced/image_captioning"> PyTorch Implementation</a>
