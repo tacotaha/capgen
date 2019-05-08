@@ -1,6 +1,16 @@
 # capgen
 > A Neural Image Caption Generator
 
+
+## Results
+
+This model was trained on the MSCOCO train2014 dataset and obtains the following results
+
+| BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 | METEOR | ROUGE_L | CIDEr|
+| ---| --- | --- | --- | --- | --- | ---| 
+| 0.651 | 0.467 | 0.322 | 0.218 | 0.212 | 0.479 | 0.690|
+
+
 ## Getting Started
 
   1. Clone the repo
