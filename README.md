@@ -27,16 +27,22 @@ This model was trained on the MSCOCO train2014 dataset and obtains the following
 
 ## Training the model 
 
-Use `train.py` to train the model
+Use `src/train.py` to train the model
 
-`$ ./train.py`
+`$ python src/train.py`
 
 
 ## Evaluate the Model
 
-Use the `eval.sh` script to evaluate the model
+Use the `eval.sh` script to evaluate the model. The resulting captions can be found in `data/results.json`.
 
 `$ scripts/eval.sh`
+
+## Inference
+
+Use `inference.py` to test the model with an example image
+
+`$ python src/inference.py <img_path.png>`
 
 
 ## References
