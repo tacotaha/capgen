@@ -10,7 +10,6 @@ This model was trained on the MSCOCO train2014 dataset and obtains the following
 | ---| --- | --- | --- | --- | --- | ---| 
 | 0.651 | 0.467 | 0.322 | 0.218 | 0.212 | 0.479 | 0.690|
 
-
 ## Getting Started
 
   1. Clone the repo
@@ -43,6 +42,10 @@ Use the `eval.sh` script to evaluate the model. The resulting captions can be fo
 Use `inference.py` to test the model with an example image
 
 `$ python src/inference.py <img_path.png>`
+
+## A Sample of Results
+
+<img src="img/collage.png">
 
 
 ## References
