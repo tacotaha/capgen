@@ -14,7 +14,7 @@ This model was trained on the MSCOCO train2014 dataset and obtains the following
 
   1. Clone the repo
 
-    $ git clone https://github.com/tazzaoui/capgen.git && cd capgen
+    $ git clone https://github.com/tacotaha/capgen.git && cd capgen
 
   2. Download MS-COCO Training Data
 
